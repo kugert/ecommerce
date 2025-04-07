@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 interface ProductPriceProps {
-    value: number;
+    value: string;
     className?: string;
 };
 
@@ -9,7 +9,7 @@ const ProductPrice = ({
     value,
     className,
 }: ProductPriceProps) => {
-    const stringValue = value.toFixed(2);
+    const stringValue = parseFloat(value).toFixed(2);
     const [intValue, floatValue] = stringValue.split(".")
 
     return (
