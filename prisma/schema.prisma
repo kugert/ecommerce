@@ -15,18 +15,78 @@ datasource db {
 }
 
 model Product {
-  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name String
-  slug String @unique(map: "product_slug_idx")
-  category String
-  images String[]
-  brand String
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  slug        String    @unique(map: "product_slug_idx")
+  category    String
+  images      String[]
+  brand       String
   description String
-  stock Int
-  price Decimal @default(0) @db.Decimal(12, 2)
-  rating Decimal @default(0) @db.Decimal(3, 2)
-  numReviews Int @default(0)
-  isFeatured Boolean @default(false)
-  banner String?
-  createdAt DateTime @default(now()) @db.Timestamp(6)
+  stock       Int
+  price       Decimal   @default(0) @db.Decimal(12, 2)
+  rating      Decimal   @default(0) @db.Decimal(3, 2)
+  numReviews  Int       @default(0)
+  isFeatured  Boolean   @default(false)
+  banner      String?
+
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+}
+
+model User {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String    @default("NO_NAME")
+  email         String    @unique(map: "user_email_idx")
+  emailVerified DateTime? @db.Timestamp(6)
+  image         String?
+  password      String?
+  role          String    @default("user")
+  address       Json?      @db.Json
+  paymentMethod String?
+
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime  @updatedAt @db.Timestamp(6)
+
+  account       Account[]
+  session       Session[]
+}
+
+model Account {
+  id                 String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String  @db.Uuid @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime  @updatedAt @db.Timestamp(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionToken String   @unique @map("session_token")
+  userId       String   @db.Uuid @map("user_id")
+  expires      DateTime @db.Timestamp(6)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime  @updatedAt @db.Timestamp(6)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime @db.Timestamp(6)
+
+  @@unique([identifier, token])
 }
