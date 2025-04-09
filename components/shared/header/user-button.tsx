@@ -1,4 +1,4 @@
-import  { auth } from "@/auth";
+import  { auth } from "@/auth-server";
 import  { signOutUser } from "@/lib/actions/user.actions";
 
 import Link from "next/link";

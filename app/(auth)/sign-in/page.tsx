@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {APP_NAME} from "@/lib/constants";
 import CredentialsSignInForm from "./credentials-sign-in-form";
-import { auth } from "@/auth";
+import { auth } from "@/auth-server";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {

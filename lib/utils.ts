@@ -35,3 +35,12 @@ export async function formatError(error: any) {
     return typeof error.message === "string" ? error.message : JSON.stringify(error);
   }
 }
+
+// Round number to two decimal places
+export function round2(value: number | string): number {
+  if (typeof value === "number" || typeof value === "string") {
+    return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+  } else {
+    throw new Error(`${value} is not a number`);
+  }
+}
