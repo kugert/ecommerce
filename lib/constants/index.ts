@@ -12,3 +12,11 @@ export const SIGN_UP_DEFAULT_VALUES = {
     password: "",
     confirmPassword: "",
 }
+
+export const shippingAddressDefaultValues = {
+    fullName: "",
+    streetAddress: "",
+    city: "",
+    postalCode: "",
+    country: "",
+};
