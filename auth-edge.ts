@@ -9,8 +9,22 @@ const config: NextAuthConfig = {
     },
     providers: [],
     callbacks: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         authorized({ request, auth }: any) {
+            const protectedRoutes = [
+                /\/shipping-address/,
+                /\/payment-method/,
+                /\/place-order/,
+                /\/profile/,
+                /\/user\/(.*)/,
+                /\/order\/(.*)/,
+                /\/admin\/(.*)/,
+                /\/admin/,
+            ];
+            const { pathname } = request.nextUrl;
+
+            if (!auth && protectedRoutes.some((path) => path.test(pathname))) return false;
+
             if (!request.cookies.get("sessionCartId")) {
                 const sessionCartId = crypto.randomUUID();
 

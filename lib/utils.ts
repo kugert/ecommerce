@@ -44,3 +44,22 @@ export function round2(value: number | string): number {
     throw new Error(`${value} is not a number`);
   }
 }
+
+const CURRENCY_FORMATTER = new Intl.NumberFormat("en-US", {
+  currency: "USD",
+  style: "currency",
+  minimumFractionDigits: 2,
+});
+
+// Format currency using the CURRENCY_FORMATTER
+export function formatCurrency(value: number | string | null){
+    if (typeof value === "number"){
+      return CURRENCY_FORMATTER.format(value);
+    }
+
+    if (typeof value === "string"){
+        return CURRENCY_FORMATTER.format(Number(value));
+    }
+
+    return "NaN";
+}
