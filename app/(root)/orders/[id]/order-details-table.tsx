@@ -18,9 +18,7 @@ const OrderDetailsTable = ({
     const {
         id,
         shippingAddress,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        orderItem,
+        orderItems,
         itemsPrice,
         shippingPrice,
         taxPrice,
@@ -83,7 +81,7 @@ const OrderDetailsTable = ({
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {(orderItem || []).map((item: OrderItem, index: number) => (
+                                    {(orderItems || []).map((item: OrderItem, index: number) => (
                                         <TableRow key={index}>
                                             <TableCell>
                                                 <Link href={`/products/${item.slug}`} className="flex items-center">
