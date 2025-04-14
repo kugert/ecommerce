@@ -100,9 +100,7 @@ export async function getOrderById(orderId: string) {
     const data = await prisma.order.findFirst({
         where: {id: orderId},
         include: {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            orderItem: true,
+            orderItems: true,
             user: {
                 select: {
                     name: true,
