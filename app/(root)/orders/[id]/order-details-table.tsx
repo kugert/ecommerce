@@ -1,19 +1,24 @@
 "use client";
 
-import {Order, OrderItem} from "@/types";
-import {formatCurrency, formatDateTime, formatId} from "@/lib/utils";
-import {Card, CardContent} from "@/components/ui/card";
-import {Badge} from "@/components/ui/badge";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import { Order, OrderItem } from "@/types";
+import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from "next/link";
 import Image from "next/image";
+import { PayPalButtons, PayPalScriptProvider, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import { createPayPalOrder, approvePayPalOrder } from "@/lib/actions/order.actions";
+import {toast} from "sonner";
 
 interface OrderDetailsTableProps {
     order: Order;
+    payPalClientId: string;
 }
 
 const OrderDetailsTable = ({
     order,
+    payPalClientId,
 }: OrderDetailsTableProps) => {
     const {
         id,
@@ -29,6 +34,51 @@ const OrderDetailsTable = ({
         paidAt,
         deliveredAt,
     } = order;
+
+    const PrintLoadingState = () => {
+        const [{ isPending, isRejected }] = usePayPalScriptReducer();
+
+        let status;
+        if (isPending) {
+            status = "Loading PayPal...";
+        } else if (isRejected) {
+            status = "Error loading PayPal";
+        } else {
+            status = ""
+        }
+
+        return status;
+    };
+
+    const handleCreatePayPalOrder = async () => {
+        const resp = await createPayPalOrder(id);
+        if (!resp.success) {
+            toast.error(resp.message, {
+                style: {
+                    backgroundColor: "red",
+                    color: "white"
+                }
+            })
+        }
+        return resp.data;
+    };
+
+    const handleApprovePayPalOrder = async (
+        data: { orderID: string }
+    ) => {
+        const resp = await approvePayPalOrder(id, {orderId: data.orderID});
+        if (!resp.success) {
+            toast.error(resp.message, {
+                style: {
+                    backgroundColor: "red",
+                    color: "white"
+                }
+            })
+            return;
+        }
+        toast.success(resp.message);
+        return;
+    };
 
     return (
         <>
@@ -121,6 +171,17 @@ const OrderDetailsTable = ({
                                 <div>Total</div>
                                 <div>{ formatCurrency(totalPrice) }</div>
                             </div>
+                            {!isPaid && paymentMethod === "PayPal" && (
+                                <div>
+                                    <PayPalScriptProvider options={{ clientId: payPalClientId }}>
+                                        <PrintLoadingState />
+                                        <PayPalButtons
+                                            createOrder={handleCreatePayPalOrder}
+                                            onApprove={handleApprovePayPalOrder}
+                                        />
+                                    </PayPalScriptProvider>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </div>

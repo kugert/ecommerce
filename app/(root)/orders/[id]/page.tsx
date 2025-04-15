@@ -20,7 +20,10 @@ const OrderDetailsPage = async (props: {
 
     return (
         <>
-            <OrderDetailsTable order={order as unknown as Order} />
+            <OrderDetailsTable
+                order={order as unknown as Order}
+                payPalClientId={process.env.PAYPAL_APP_CLIENT_ID || "sb"}
+            />
         </>
     );
 }
