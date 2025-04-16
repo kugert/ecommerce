@@ -1,24 +1,34 @@
 "use client";
 
+import { useTransition } from "react";
+
 import { Order, OrderItem } from "@/types";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { PayPalButtons, PayPalScriptProvider, usePayPalScriptReducer } from "@paypal/react-paypal-js";
-import { createPayPalOrder, approvePayPalOrder } from "@/lib/actions/order.actions";
+import {
+  createPayPalOrder,
+  approvePayPalOrder,
+  updateOrderToPaidCOD,
+  updateOrderToDelivered,
+} from "@/lib/actions/order.actions";
 import {toast} from "sonner";
 
 interface OrderDetailsTableProps {
     order: Order;
     payPalClientId: string;
+    isAdmin?: boolean;
 }
 
 const OrderDetailsTable = ({
     order,
     payPalClientId,
+    isAdmin = false,
 }: OrderDetailsTableProps) => {
     const {
         id,
@@ -80,6 +90,58 @@ const OrderDetailsTable = ({
         return;
     };
 
+    const MarkAsPaid = () => {
+      const [isPending, startTransition] = useTransition();
+
+      return (
+        <Button
+          type="button"
+          disabled={isPending}
+          onClick={() => startTransition(async () => {
+            const resp = await updateOrderToPaidCOD(id);
+            if (!resp.success) {
+                toast.error(resp.message, {
+                    style: {
+                        backgroundColor: "red",
+                        color: "white"
+                    }
+                })
+            } else {
+              toast.success(resp.message);
+            }
+          })}
+        >
+          {isPending ? "Processing..." : "Mark as Paid"}
+        </Button>
+      );
+    };
+
+    const MarkAsDelivered = () => {
+      const [isPending, startTransition] = useTransition();
+
+      return (
+        <Button
+          type="button"
+          disabled={isPending}
+          onClick={() => startTransition(async () => {
+            const resp = await updateOrderToDelivered(id);
+            if (!resp.success) {
+              toast.error(resp.message, {
+                style: {
+                  backgroundColor: "red",
+                  color: "white"
+                }
+              })
+            } else {
+              toast.success(resp.message);
+            }
+          })}
+        >
+          {isPending ? "Processing..." : "Mark as Delivered"}
+        </Button>
+      );
+    };
+
     return (
         <>
             <h1 className="py-4 text-2xl">Order {formatId(id)}</h1>
@@ -110,7 +172,7 @@ const OrderDetailsTable = ({
                             </p>
                             { isDelivered ? (
                                 <Badge variant="secondary">
-                                    Paid at {formatDateTime(deliveredAt!).dateTime}
+                                    Delivered at {formatDateTime(deliveredAt!).dateTime}
                                 </Badge>
                             ) : (
                                 <Badge variant="destructive">
@@ -182,6 +244,12 @@ const OrderDetailsTable = ({
                                     </PayPalScriptProvider>
                                 </div>
                             )}
+                          {isAdmin && !isPaid && paymentMethod === "Cash on Delivery" && (
+                            <MarkAsPaid />
+                          )}
+                          {isAdmin && isPaid && !isDelivered && (
+                            <MarkAsDelivered />
+                          )}
                         </CardContent>
                     </Card>
                 </div>
