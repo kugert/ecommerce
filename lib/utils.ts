@@ -134,3 +134,7 @@ export function formUrlQuery({
     query
   }, { skipNull: true });
 }
+
+export  function capitalize(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
