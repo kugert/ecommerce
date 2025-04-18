@@ -15,7 +15,7 @@ const PaymentMethodPage = async () => {
     if (!userId) throw new Error("No user not found");
 
     const user = await getUserById(userId);
-
+    if (!user) throw new Error("User not found");
 
     return (
         <>
