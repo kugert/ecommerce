@@ -244,7 +244,7 @@ const OrderDetailsTable = ({
                                     </PayPalScriptProvider>
                                 </div>
                             )}
-                          {isAdmin && !isPaid && paymentMethod === "Cash on Delivery" && (
+                          {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
                             <MarkAsPaid />
                           )}
                           {isAdmin && isPaid && !isDelivered && (

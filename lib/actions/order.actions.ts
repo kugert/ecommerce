@@ -24,6 +24,7 @@ export async function createOrder(){
         if (!userId) throw new Error("User not found");
 
         const user = await getUserById(userId);
+        if (!user) throw new Error("User not found");
 
         if (!cart || cart.items.length === 0) {
             return {
@@ -314,11 +315,22 @@ export async function getOrderSummary() {
 export async function getAllOrders({
   limit = PAGE_SIZE,
   page,
+  query,
 }: {
   limit?: number;
   page: number;
+  query?: string;
 }) {
+  const queryFilter: Prisma.OrderWhereInput = query && query !== "all" ? {
+    user: {
+      name: {
+        contains: query,
+        mode: "insensitive",
+      } as Prisma.StringFilter,
+    },
+  } : {};
   const data = await prisma.order.findMany({
+    where: { ...queryFilter },
     orderBy: { createdAt: "desc" },
     take: limit,
     skip: (page - 1) * limit,
