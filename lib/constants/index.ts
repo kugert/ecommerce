@@ -47,3 +47,11 @@ export const DEFAULT_PRODUCT_VALUES = {
 export const USER_ROLES = process.env.USER_ROLES
   ? process.env.USER_ROLES.split(", ")
   : ["user", "admin"];
+
+export const FEATURED_PRODUCTS_LIMIT = Number(process.env.FEATURED_PRODUCTS_LIMIT) || 4;
+
+export const REVIEW_FORM_DEFAULT_VALUES = {
+  title: "",
+  description: "",
+  rating: 0,
+};
