@@ -57,3 +57,8 @@ export const REVIEW_FORM_DEFAULT_VALUES = {
 };
 
 export const SENDER_EMAIL = process.env.SENDER_EMAIL || "onboarding@resend.dev"
+
+export const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24;
+export const MILLISECONDS_IN_AN_HOUR = 1000 * 60 * 60;
+export const MILLISECONDS_IN_A_MINUTE = 1000 * 60;
+export const MILLISECONDS_IN_A_SECOND = 1000;
