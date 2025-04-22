@@ -3,6 +3,7 @@ import { getAllCategories } from "@/lib/actions/product.actions";
 import ProductCard from "@/components/shared/product/product-card";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
+import {humanize} from "@/lib/utils";
 
 const prices = [
   { name: "All", value: "all" },
@@ -153,7 +154,7 @@ const SearchPage = async (props: {
       </div>
       <div className="md:col-span-4 space-y-4">
         <div className="flex-between flex-col my-4 md:flex-row">
-          <div className="flex items-center">
+          <div className="flex items-center text-sm">
             { q !== "all" && q !== "" && "Query: " + q }
             { category !== "all" && category !== "" && " Category: " + category }
             { price !== "all" && price !== "" && " Price: " + price }
@@ -171,8 +172,8 @@ const SearchPage = async (props: {
               <Link
                 key={srt}
                 href={getFilterUrl({ sort: srt })}
-                className={`mx-2 ${(sort == srt) && "font-bold"}`}
-              >{srt}</Link>
+                className={`mx-2 text-sm ${(sort == srt) && "font-bold"}`}
+              >{humanize(srt)}</Link>
             ))}
           </div>
         </div>
