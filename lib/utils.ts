@@ -138,3 +138,12 @@ export function formUrlQuery({
 export  function capitalize(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+export function humanize(str: string){
+    return str
+        .replace("-", ' ')
+        .toLowerCase()
+        .split(' ')
+        .map(word => capitalize(word))
+        .join(' ');
+}
